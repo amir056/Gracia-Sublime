@@ -11,29 +11,30 @@
 const botonMenu = document.getElementById("menu-movil");
 const navegacion = document.getElementById("navegacion");
 
-botonMenu.addEventListener("click", () => {
+if (botonMenu && navegacion) {
 
-    navegacion.classList.toggle("activo");
+    botonMenu.addEventListener("click", () => {
 
-    const menuAbierto = navegacion.classList.contains("activo");
+        navegacion.classList.toggle("activo");
 
-    botonMenu.textContent = menuAbierto ? "✕" : "☰";
+        const menuAbierto = navegacion.classList.contains("activo");
 
-});
-
-
-// Cerrar menu al seleccionar una opcion
-
-document.querySelectorAll(".navegacion a").forEach(enlace => {
-
-    enlace.addEventListener("click", () => {
-
-        navegacion.classList.remove("activo");
-        botonMenu.textContent = "☰";
+        botonMenu.textContent = menuAbierto ? "✕" : "☰";
 
     });
 
-});
+    document.querySelectorAll(".navegacion a").forEach(enlace => {
+
+        enlace.addEventListener("click", () => {
+
+            navegacion.classList.remove("activo");
+            botonMenu.textContent = "☰";
+
+        });
+
+    });
+
+}
 
 
 /* =========================================
@@ -53,25 +54,50 @@ const fotografias = [
     "gs8.jpeg",
     "gs9.jpeg",
     "gs10.jpeg",
-    "festejo dia madres.jpeg"
+    "festejo dia madres.jpeg",
+
+    "WhatsApp Image 2026-11-09 at 3.09.01 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.01 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.02 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.02 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.03 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.03 PM (2).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.03 PM (3).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.03 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.04 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.04 PM (2).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.04 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.05 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.05 PM (2).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.09.05 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.04 PM.jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.05 PM (1).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.05 PM (2).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.05 PM (3).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.05 PM (4).jpeg",
+    "WhatsApp Image 2026-11-09 at 3.22.05 PM.jpeg"
 ];
 
-fotografias.forEach((fotografia, indice) => {
+if (contenedorGaleria) {
 
-    const imagen = document.createElement("img");
+    fotografias.forEach((fotografia, indice) => {
 
-    imagen.src = `../${fotografia}`;
-    imagen.alt = `Fotografía de Gracia Sublime ${indice + 1}`;
-    imagen.classList.add("foto-galeria");
-    imagen.loading = "lazy";
+        const imagen = document.createElement("img");
 
-    imagen.addEventListener("error", () => {
-        imagen.remove();
+        imagen.src = `../imagenes/${fotografia}`;
+        imagen.alt = `Fotografía de Gracia Sublime ${indice + 1}`;
+        imagen.classList.add("foto-galeria");
+        imagen.loading = "lazy";
+
+        imagen.addEventListener("error", () => {
+            imagen.remove();
+        });
+
+        contenedorGaleria.appendChild(imagen);
+
     });
 
-    contenedorGaleria.appendChild(imagen);
-
-});
+}
 
 
 /* =========================================
@@ -80,28 +106,40 @@ fotografias.forEach((fotografia, indice) => {
 
 const elementos = document.querySelectorAll(".seccion");
 
-const observador = new IntersectionObserver((entradas) => {
+if ("IntersectionObserver" in window) {
 
-    entradas.forEach(entrada => {
+    const observador = new IntersectionObserver((entradas) => {
 
-        if (entrada.isIntersecting) {
+        entradas.forEach(entrada => {
 
-            entrada.target.classList.add("visible");
+            if (entrada.isIntersecting) {
 
-        }
+                entrada.target.classList.add("visible");
+
+                observador.unobserve(entrada.target);
+
+            }
+
+        });
+
+    }, {
+        threshold: 0.15
+    });
+
+    elementos.forEach(elemento => {
+
+        elemento.classList.add("aparecer");
+        observador.observe(elemento);
 
     });
 
-}, {
-    threshold: 0.15
-});
+} else {
 
-elementos.forEach(elemento => {
+    elementos.forEach(elemento => {
+        elemento.classList.add("visible");
+    });
 
-    elemento.classList.add("aparecer");
-    observador.observe(elemento);
-
-});
+}
 
 
 /* =========================================
@@ -155,6 +193,111 @@ if (logo) {
     logo.addEventListener("mouseleave", () => {
 
         logo.style.transform = "scale(1)";
+
+    });
+
+}
+
+
+/* =========================================
+   BIBLIOTECA DE PREDICACIONES Y ENSENANZAS
+========================================= */
+
+// Materiales de ejemplo.
+// Más adelante incorporaremos los documentos reales
+// de las carpetas de Gracia Sublime.
+
+const materialesBiblioteca = {
+    "predicaciones-generales": [],
+    "predicaciones-juveniles": [],
+    "versiculos-explicados": [],
+    "talleres-y-planes-de-lectura": []
+};
+
+
+// Mostrar u ocultar los materiales de cada categoría.
+
+document.querySelectorAll("[data-categoria]").forEach(boton => {
+
+    boton.addEventListener("click", () => {
+
+        const categoria = boton.dataset.categoria;
+        const lista = document.getElementById(categoria);
+
+        if (!lista) return;
+
+        const estaAbierta = lista.classList.contains("activo");
+
+        // Cerrar las demás categorías.
+
+        document.querySelectorAll(".lista-materiales").forEach(otraLista => {
+            otraLista.classList.remove("activo");
+        });
+
+        if (!estaAbierta) {
+
+            lista.classList.add("activo");
+
+            mostrarMateriales(categoria, lista);
+
+        }
+
+    });
+
+});
+
+
+// Mostrar los documentos disponibles.
+
+function mostrarMateriales(categoria, contenedor) {
+
+    const materiales = materialesBiblioteca[categoria];
+
+    contenedor.innerHTML = "";
+
+    if (!materiales || materiales.length === 0) {
+
+        const mensaje = document.createElement("p");
+
+        mensaje.textContent = "Todavía no hay materiales publicados en esta categoría.";
+
+        contenedor.appendChild(mensaje);
+
+        return;
+
+    }
+
+    materiales.forEach(material => {
+
+        const enlace = document.createElement("a");
+
+        enlace.href = material.archivo;
+        enlace.textContent = material.nombre;
+        enlace.download = material.nombre;
+        enlace.classList.add("enlace-material");
+
+        contenedor.appendChild(enlace);
+
+    });
+
+}
+
+
+/* =========================================
+   BOTON SUBIR TU PORCION
+========================================= */
+
+const botonSubirMaterial = document.getElementById("boton-subir-material");
+
+if (botonSubirMaterial) {
+
+    botonSubirMaterial.addEventListener("click", () => {
+
+        alert(
+            "¡Gracias por querer compartir tu porción!\n\n" +
+            "El formulario de envío estará disponible cuando " +
+            "conectemos el sistema de almacenamiento y revisión de materiales."
+        );
 
     });
 
